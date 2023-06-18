@@ -6,11 +6,27 @@ func torus(p vec2) float {
   return abs(length(p)-r) - innerRadius
 }
 
+func circle(p vec2) float {
+  return length(p)-0.05
+}
+
+func rotate(p vec2, angle float) vec2 {
+  rot := mat2(cos(angle), -sin(angle), sin(angle), cos(angle))
+  return rot * p
+}
+
 func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     origin, size := imageSrcRegionOnTexture()
     uv := (texCoords - origin) / size * 2 - 1
   
     d := torus(uv)+0.025
+    baseAngle := 6.28 / 8
+    
+    for i := 0.0; i < 8.0; i++ {
+      angle := baseAngle * i + 3.14 / 8
+      v := vec2(cos(angle), sin(angle))/1.04
+      d = min(d, circle(uv-v))
+    }
     // Inner color with time
     clr := vec3(0.87)
     // Outside discard
