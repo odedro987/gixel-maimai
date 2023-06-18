@@ -16,7 +16,3 @@ type Action struct {
 	gixel.BaseGxlSprite
 	actionType ActionType
 }
-
-func (a *Action) Init(game *gixel.GxlGame) {
-	a.BaseGxlSprite.Init(game)
-}
