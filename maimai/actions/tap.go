@@ -1,8 +1,9 @@
 package actions
 
 import (
+	"gixel-maimai/maimai/color"
 	"gixel-maimai/maimai/shaders"
-	"image/color"
+	ic "image/color"
 
 	"github.com/GixelEngine/gixel-engine/gixel"
 	"github.com/GixelEngine/gixel-engine/gixel/cache"
@@ -10,10 +11,13 @@ import (
 
 type Tap struct {
 	Action
+	grad color.Gradient2
 }
 
-func NewTap(x, y float64) *Tap {
-	t := &Tap{}
+func NewTap(x, y float64, grad color.Gradient2) *Tap {
+	t := &Tap{
+		grad: grad,
+	}
 	t.SetPosition(x, y)
 	return t
 }
@@ -23,8 +27,8 @@ func (t *Tap) Init(game *gixel.GxlGame) {
 	t.actionType = ActionTap
 
 	//t.ApplyGraphic(game.Graphics().LoadGraphic("maimai/assets/images/tap.png", cache.CacheOptions{}))
-	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(100, 100, color.Black, cache.CacheOptions{}))
-	t.ApplyShader(shaders.NewTapShader([3]float32{255, 0, 120}, [3]float32{255, 160, 230}))
+	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(100, 100, ic.Black, cache.CacheOptions{}))
+	t.ApplyShader(shaders.NewTapShader(t.grad))
 }
 
 func (t *Tap) Update(elapsed float64) error {

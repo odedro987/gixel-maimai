@@ -1,17 +1,21 @@
 package shaders
 
-import "github.com/GixelEngine/gixel-engine/gixel/shader"
+import (
+	"gixel-maimai/maimai/color"
+
+	"github.com/GixelEngine/gixel-engine/gixel/shader"
+)
 
 type TapShader struct {
 	shader.BaseGxlShader
 }
 
-func NewTapShader(color1 [3]float32, color2 [3]float32) *TapShader {
+func NewTapShader(gradient color.Gradient2) *TapShader {
 	return &TapShader{
 		BaseGxlShader: *shader.NewShader("maimai/assets/shaders/tap.kage", map[string]interface{}{
 			"Time":   float32(0),
-			"Color1": color1,
-			"Color2": color2,
+			"Color1": gradient.Start().ToRGBSlice(),
+			"Color2": gradient.End().ToRGBSlice(),
 		}),
 	}
 }
