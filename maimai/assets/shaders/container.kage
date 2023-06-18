@@ -1,13 +1,13 @@
 package main
 
 func torus(p vec2) float {
-  innerRadius := 0.0367
-  r := 1-innerRadius
+  innerRadius := 0.0375
+  r := 0.98-innerRadius
   return abs(length(p)-r) - innerRadius
 }
 
 func circle(p vec2) float {
-  return length(p)-0.05
+  return length(p)-0.04
 }
 
 func rotate(p vec2, angle float) vec2 {
@@ -20,18 +20,20 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     uv := (texCoords - origin) / size * 2 - 1
   
     d := torus(uv)+0.025
-    baseAngle := 6.28 / 8
+    count := 8.0
     
-    for i := 0.0; i < 8.0; i++ {
-      angle := baseAngle * i + 3.14 / 8
-      v := vec2(cos(angle), sin(angle))/1.04
-      d = min(d, circle(uv-v))
-    }
+    angleOffset := 3.14 / count
+    uv = rotate(uv, angleOffset)
+    angle := atan2(uv.y, uv.x) / 6.28
+    angle = (floor(angle * count + 0.5) / count) * 6.28
+    off := vec2(cos(angle), sin(angle)) / 1.06
+    d = min(d, circle(uv - off))
+
     // Inner color with time
     clr := vec3(0.87)
     // Outside discard
-    outside := (1-smoothstep(0, 0.005, d))
+    outside := (1 - smoothstep(0, 0.005, d))
     // Black outline
-    clr *= (1-smoothstep(0.005, 0, abs(d)))
-    return vec4(clr, 1)*outside
+    clr *= (1 - smoothstep(0.005, 0, abs(d)))
+    return vec4(clr, 1) * outside
 }
