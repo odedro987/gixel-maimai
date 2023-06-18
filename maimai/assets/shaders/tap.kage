@@ -1,0 +1,32 @@
+package main
+
+var Time float
+var Color1 vec3
+var Color2 vec3
+
+func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
+    origin, size := imageSrcRegionOnTexture()
+    uv := (texCoords - origin) / size
+
+    toCenter := vec2(0.5) - uv
+    r := length(toCenter)
+
+    blackArea := step(0.35, r) - step(0.5, r)
+    if blackArea == 0 {
+        discard()
+    }
+    color := vec3(0)
+
+    whiteArea := step(0.37, r) - step(0.48, r)
+    if whiteArea == 1 {
+        color = vec3(1)
+    }
+
+    gradientArea := step(0.39, r) - step(0.46, r)
+    if gradientArea == 1 {
+        angle := ((atan2(toCenter.y, toCenter.x) + Time) / 6.28) + 0.5
+        color = mix(Color1 / 255, Color2 / 255, mod(angle * 4, 1))
+    }
+
+	return vec4(color, 1)
+}

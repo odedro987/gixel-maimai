@@ -3,7 +3,7 @@ module gixel-maimai
 go 1.19
 
 require (
-	github.com/GixelEngine/gixel-engine v0.0.0-20230610144438-a1647c254fe4
+	github.com/GixelEngine/gixel-engine v0.0.0-20230618121424-8631942155cd
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 )
 
@@ -18,7 +18,9 @@ require (
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
 	golang.org/x/image v0.6.0 // indirect
 	golang.org/x/mobile v0.0.0-20230301163155-e0f57694e12c // indirect
+	golang.org/x/mod v0.9.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/tools v0.7.0 // indirect
 )

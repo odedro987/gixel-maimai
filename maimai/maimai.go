@@ -12,7 +12,7 @@ import (
 var assets embed.FS
 
 func init() {
-	game := gixel.NewGame(1280, 720, "Maimai", &assets, &states.MenuState{}, 1)
+	game := gixel.NewGame(1280, 800, "Maimai", &assets, &states.MenuState{}, 1)
 
 	mobile.SetGame(game)
 }
