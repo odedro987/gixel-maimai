@@ -27,7 +27,7 @@ func (t *Tap) Init(game *gixel.GxlGame) {
 	t.actionType = ActionTap
 
 	//t.ApplyGraphic(game.Graphics().LoadGraphic("maimai/assets/images/tap.png", cache.CacheOptions{}))
-	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(100, 100, ic.Black, cache.CacheOptions{}))
+	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(64, 64, ic.Black, cache.CacheOptions{}))
 	t.ApplyShader(shaders.NewTapShader(t.grad))
 }
 

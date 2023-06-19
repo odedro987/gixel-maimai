@@ -1,13 +1,13 @@
 package main
 
 func torus(p vec2) float {
-  innerRadius := 0.0375
-  r := 0.98-innerRadius
+  innerRadius := 0.035
+  r := 1-innerRadius
   return abs(length(p)-r) - innerRadius
 }
 
 func circle(p vec2) float {
-  return length(p)-0.04
+  return length(p)-0.035
 }
 
 func rotate(p vec2, angle float) vec2 {
@@ -26,7 +26,7 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     uv = rotate(uv, angleOffset)
     angle := atan2(uv.y, uv.x) / 6.28
     angle = (floor(angle * count + 0.5) / count) * 6.28
-    off := vec2(cos(angle), sin(angle)) / 1.06
+    off := vec2(cos(angle), sin(angle)) / 1.035
     d = min(d, circle(uv - off))
 
     // Inner color with time
