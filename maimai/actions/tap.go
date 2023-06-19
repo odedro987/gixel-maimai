@@ -14,8 +14,12 @@ type Tap struct {
 	grad color.Gradient2
 }
 
-func NewTap(x, y float64, grad color.Gradient2) *Tap {
+func NewTap(x, y float64, grad color.Gradient2, dstIdx int8) *Tap {
 	t := &Tap{
+		Action: Action{
+			actionType: ActionTap,
+			dstIdx:     dstIdx,
+		},
 		grad: grad,
 	}
 	t.SetPosition(x, y)
@@ -24,7 +28,6 @@ func NewTap(x, y float64, grad color.Gradient2) *Tap {
 
 func (t *Tap) Init(game *gixel.GxlGame) {
 	t.Action.Init(game)
-	t.actionType = ActionTap
 
 	//t.ApplyGraphic(game.Graphics().LoadGraphic("maimai/assets/images/tap.png", cache.CacheOptions{}))
 	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(64, 64, ic.Black, cache.CacheOptions{}))
@@ -32,6 +35,11 @@ func (t *Tap) Init(game *gixel.GxlGame) {
 }
 
 func (t *Tap) Update(elapsed float64) error {
+	err := t.Action.Update(elapsed)
+	if err != nil {
+		return err
+	}
+
 	t.Shader().Update(elapsed)
 
 	return nil

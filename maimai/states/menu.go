@@ -24,10 +24,9 @@ func (s *MenuState) Init(game *gixel.GxlGame) {
 	container := ui.NewContainer(240, 0)
 	s.Add(container)
 
-	s.Add(actions.NewTap(640-50, 100, color.Pink))
-	s.Add(actions.NewTap(640+50, 100, color.Blue))
-	s.Add(actions.NewTap(640-50, 200, color.Double))
-	s.Add(actions.NewTap(640+50, 200, color.Break))
+	for i := 0; i < 8; i++ {
+		s.Add(actions.NewTap(640-32, 400-32, color.Pink, int8(i)))
+	}
 
 	// for i := 0; i < 1000; i++ {
 	// 	s.Add(actions.NewTap(rand.Float64()*700, rand.Float64()*700))
