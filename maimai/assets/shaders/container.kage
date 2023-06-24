@@ -16,24 +16,29 @@ func rotate(p vec2, angle float) vec2 {
 }
 
 func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
-    origin, size := imageSrcRegionOnTexture()
-    uv := (texCoords - origin) / size * 2 - 1
-  
-    d := torus(uv)+0.025
-    count := 8.0
-    
-    angleOffset := 3.14 / count
-    uv = rotate(uv, angleOffset)
-    angle := atan2(uv.y, uv.x) / 6.28
-    angle = (floor(angle * count + 0.5) / count) * 6.28
-    off := vec2(cos(angle), sin(angle)) / 1.035
-    d = min(d, circle(uv - off))
+  origin, size := imageSrcRegionOnTexture()
+  uv := (texCoords - origin) / size * 2 - 1
 
-    // Inner color with time
-    clr := vec3(0.87)
-    // Outside discard
-    outside := (1 - smoothstep(0, 0.005, d))
-    // Black outline
-    clr *= (1 - smoothstep(0.005, 0, abs(d)))
-    return vec4(clr, 1) * outside
+  // Ring
+  d := torus(uv)+0.025
+
+  // Circle count
+  count := 8.0
+  angleOffset := 3.14 / count
+
+  // Circles based on `count` and rotation
+  uv = rotate(uv, angleOffset)
+  angle := atan2(uv.y, uv.x) / 6.28
+  angle = (floor(angle * count + 0.5) / count) * 6.28
+  off := vec2(cos(angle), sin(angle)) / 1.035
+  d = min(d, circle(uv - off))
+
+  // Inner color with time
+  clr := vec3(0.87)
+  // Outside discard
+  outside := (1 - smoothstep(0, 0.005, d))
+  // Black outline
+  clr *= (1 - smoothstep(0.005, 0, abs(d)))
+  
+  return vec4(clr, 1) * outside
 }

@@ -24,5 +24,6 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     outside := (1-smoothstep(0, 0.025, d))
     // Black outline
     clr *= (1-smoothstep(0.05, 0, abs(d)))
+    
     return vec4(clr, 1)*outside
 }
