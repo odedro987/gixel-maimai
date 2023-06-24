@@ -27,12 +27,18 @@ func rotate(p vec2, angle float) vec2 {
   return rot * p
 }
 
+func easeInCubic(x float) float {
+  return x * x * x;
+}
+
 func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     origin, size := imageSrcRegionOnTexture()
     uv := (texCoords - origin) / size * 2 - 1
     uv = uv * 2
 
-    d := circle(uv)
+    dCircle := circle(uv)
+    d := dCircle
+    clr := Color2 / 255
 
     tri := vec2(0.75, -0.75)
     count := 4.0
@@ -42,12 +48,17 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
     angle = (floor(angle * count + 0.5) / count) * 6.28
     off := vec2(cos(angle), sin(angle))
     evenFlag := mod((angle + angleOffset) / angleOffset, 2) * 2 - 1
-    distanceOffset := rotate(vec2(0, sin(Time*2) * 0.4 - 0.35), angle + angleOffset * -evenFlag)
+    ease := 0.1 - easeInCubic(max(0, Time*3 - 2)) * 0.4
+    distanceOffset := rotate(vec2(0, max(ease, -1)), angle + angleOffset * -evenFlag)
     translateUV := uv - off + distanceOffset
     rotateUV := rotate(translateUV, angle + angleOffset)
-    d = min(d, hollowTriangle(rotateUV, tri, 0.15))
+    dTriangle := hollowTriangle(rotateUV, tri, 0.15)
 
-    clr := mix(Color1 / 255, Color2 / 255, length(rotateUV))
+    if dTriangle < dCircle {
+      clr = mix(Color1 / 255, Color2 / 255, length(rotateUV))
+      d = dTriangle
+    }
+
     // White strip
     clr = mix(clr, vec3(1), smoothstep(0, 0.05, d+0.1))
     // Outside discard
