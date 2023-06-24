@@ -28,9 +28,6 @@ type Action struct {
 func (a *Action) Init(game *gixel.GxlGame) {
 	a.BaseGxlSprite.Init(game)
 	a.Physics.Init(a)
-
-	a.Velocity().Set(100, 100)
-	a.Velocity().SetRadians((3.14 / 8) + (6.28/8)*float64(int(a.dstIdx)))
 }
 
 func (a *Action) Update(elapsed float64) error {
