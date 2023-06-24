@@ -1,0 +1,42 @@
+package main
+
+var Time float
+var Color1 vec3
+var Color2 vec3
+
+func star5(p vec2, r float, m float) float {
+    // these 4 lines can be precomputed for a given shape
+    an := 3.141593/5;
+    en := 3.141593/m;
+    acs := vec2(cos(an),sin(an));
+    ecs := vec2(cos(en),sin(en)); // ecs=vec2(0,1) and simplify, for regular polygon,
+
+    // reduce to first sector
+    bn := mod(atan2(p.x,p.y),2.0*an) - an;
+    p = length(p)*vec2(cos(bn),abs(sin(bn)));
+
+    // line sdf
+    p -= r*acs;
+    p += ecs*clamp( -dot(p,ecs), 0.0, r*acs.y/ecs.y);
+    return length(p)*sign(p.x);
+}
+
+func hollowStar(p vec2, r float) float {
+  return abs(star5(p, 0.85, 3.3)) - r
+}
+
+func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
+	origin, size := imageSrcRegionOnTexture()
+	uv := (texCoords-origin)/size*2 - 1
+
+	d := hollowStar(uv, 0.15)
+	// Inner color with time
+	clr := mix(Color1/255, Color2/255, length(uv))
+	// White strip
+	clr = mix(clr, vec3(1), smoothstep(0, 0.05, d+0.1))
+	// Outside discard
+	outside := (1 - smoothstep(0, 0.025, d))
+	// Black outline
+	clr *= (1 - smoothstep(0.05, 0, abs(d)))
+	return vec4(clr, 1) * outside
+}
