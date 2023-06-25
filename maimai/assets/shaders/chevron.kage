@@ -1,0 +1,41 @@
+package main
+
+var Color1 vec3
+var Color2 vec3
+
+func parallelogram(p vec2, wi, he, sk float) float {
+    e := vec2(sk,he)
+    p = p * sign(p.y)
+    w := p - e 
+    w.x -= clamp(w.x,-wi,wi)
+    d := vec2(dot(w,w), -w.y)
+    s := p.x*e.y - p.y*e.x
+    p = p * sign(s)
+    v := p - vec2(wi,0)
+    v -= e*clamp(dot(v,e)/dot(e,e),-1.0,1.0)
+    d = min( d, vec2(dot(v,v), wi*he-abs(s)))
+    return sqrt(d.x)*sign(-d.y)
+}
+
+func rotate(p vec2, angle float) vec2 {
+  rot := mat2(cos(angle), -sin(angle), sin(angle), cos(angle))
+  return rot * p
+}
+
+func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
+	origin, size := imageSrcRegionOnTexture()
+	uv := (texCoords-origin)/size*2 - 1
+    uv.y = abs(uv.y)
+
+	d := parallelogram(uv, 0.3, 0.8, 0.5)
+    clr := Color2/255
+
+	// White strip
+	clr = mix(clr, vec3(1), smoothstep(0, 0.05, d+0.1))
+	// Outside discard
+	outside := (1 - smoothstep(0, 0.025, d))
+	// Black outline
+	clr *= (1 - smoothstep(0.05, 0, abs(d)))
+  
+	return vec4(clr, 1) * outside
+}
