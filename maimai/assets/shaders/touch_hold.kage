@@ -1,6 +1,7 @@
 package main
 
 var Time float
+var Progress float
 
 func circle(p vec2) float {
   return length(p)-0.2
@@ -14,6 +15,11 @@ func triangle(p, q vec2) float {
   d := min(dot( a, a ),dot(b, b))
   s := max( k*(p.x*q.y-p.y*q.x),k*(p.y-q.y)  )
 	return sqrt(d)*sign(s)
+}
+
+func box(p, b vec2, r float) float {
+    d := abs(p)-b
+    return abs(length(max(d,0.0)) + min(max(d.x,d.y),0.0)) - r
 }
 
 func roundTriangle(p, q vec2, r float) float {
@@ -37,7 +43,7 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
   var Colors [4]vec3
   Colors[0] = vec3(0, 0.5, 0.8) // Blue
   Colors[1] = vec3(0.86, 0.18, 0.18) // Red
-  Colors[2] = vec3(1, 1, 0) //
+  Colors[2] = vec3(1, 1, 0) // Yellow
   Colors[3] = vec3(0.1, 0.7, 0.43) // Green
 
   // Middle circle
@@ -64,9 +70,17 @@ func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
   dTriangle := roundTriangle(rotateUV, tri, 0.15)
 
   // Override circle color only if inside triangle
+  uvAngle := atan2(uv.y, uv.x) + 3.14
   if dTriangle < dCircle {
-    clr = Colors[int((atan2(uv.y, uv.x) + 3.14) / (3.14 / 2))]
+    clr = Colors[int(uvAngle / (3.14 / 2))]
     d = dTriangle
+  }
+
+  uvAngleNorm := mod((uvAngle - angleOffset), 6.28) / 6.28
+  if uvAngleNorm < Progress {
+    rotateUV = rotate(uv, angleOffset / 2)
+    dBox := box(rotateUV, vec2(1.1), 0.25)
+    d = min(d, dBox)
   }
 
   // White strip
