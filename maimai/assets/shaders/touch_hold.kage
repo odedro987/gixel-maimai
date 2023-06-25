@@ -1,0 +1,80 @@
+package main
+
+var Time float
+
+func circle(p vec2) float {
+  return length(p)-0.2
+}
+
+func triangle(p, q vec2) float {
+  p.x = abs(p.x)
+  a := p - q*clamp( dot(p,q)/dot(q,q), 0.0, 1.0 )
+  b := p - q*vec2( clamp( p.x/q.x, 0.0, 1.0 ), 1.0 )
+  k := sign( q.y )
+  d := min(dot( a, a ),dot(b, b))
+  s := max( k*(p.x*q.y-p.y*q.x),k*(p.y-q.y)  )
+	return sqrt(d)*sign(s)
+}
+
+func roundTriangle(p, q vec2, r float) float {
+  return triangle(p, q)-r
+}
+
+func rotate(p vec2, angle float) vec2 {
+  rot := mat2(cos(angle), -sin(angle), sin(angle), cos(angle))
+  return rot * p
+}
+
+func easeInCubic(x float) float {
+  return x * x * x;
+}
+
+func Fragment(_ vec4, texCoords vec2, _ vec4) vec4 {
+  origin, size := imageSrcRegionOnTexture()
+  uv := (texCoords - origin) / size * 2 - 1
+  uv = uv * 2
+
+  var Colors [4]vec3
+  Colors[0] = vec3(0, 0.5, 0.8) // Blue
+  Colors[1] = vec3(0.86, 0.18, 0.18) // Red
+  Colors[2] = vec3(1, 1, 0) //
+  Colors[3] = vec3(0.1, 0.7, 0.43) // Green
+
+  // Middle circle
+  dCircle := circle(uv)
+  d := dCircle
+  clr :=  Colors[0]
+
+  // Triangle size
+  tri := vec2(0.75, -0.75)
+  count := 4.0
+  angleOffset := 6.28 / count
+  
+  // Translate with offset based on angle(snapped to `count`)
+  angle := atan2(uv.y, uv.x) / 6.28
+  angle = (floor(angle * count) / count) * 6.28
+  off := vec2(cos(angle), sin(angle))
+  // Triangle animation distance based on `Time` and rotation
+  evenFlag := mod((angle + angleOffset) / angleOffset, 2) * 2 - 1
+  ease := min(easeInCubic(max(0, Time*3 - 2)), 1) * 0.75
+  distanceOffset := rotate(vec2(-0.75 + ease, -0.25 - ease), angle + angleOffset * -evenFlag)
+  translateUV := uv - off + distanceOffset
+  rotateUV := rotate(translateUV, angle + angleOffset)
+  rotateUV = rotate(rotateUV, 3.14 / 4)
+  dTriangle := roundTriangle(rotateUV, tri, 0.15)
+
+  // Override circle color only if inside triangle
+  if dTriangle < dCircle {
+    clr = Colors[int((atan2(uv.y, uv.x) + 3.14) / (3.14 / 2))]
+    d = dTriangle
+  }
+
+  // White strip
+  clr = mix(clr, vec3(1), smoothstep(0, 0.05, d+0.1))
+  // Outside discard
+  outside := (1-smoothstep(0, 0.025, d))
+  // Black outline
+  clr *= (1-smoothstep(0.05, 0, abs(d)))
+
+  return vec4(clr, 1)*outside
+}
