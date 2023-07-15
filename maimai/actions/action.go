@@ -22,7 +22,6 @@ type Action struct {
 	physics.Physics
 	// Action
 	actionType ActionType
-	dstIdx     int8
 }
 
 func (a *Action) Init(game *gixel.GxlGame) {

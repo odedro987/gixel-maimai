@@ -11,16 +11,17 @@ import (
 
 type Tap struct {
 	Action
-	grad color.Gradient2
+	grad   color.Gradient2
+	dstIdx int8
 }
 
 func NewTap(x, y float64, grad color.Gradient2, dstIdx int8) *Tap {
 	t := &Tap{
 		Action: Action{
 			actionType: ActionTap,
-			dstIdx:     dstIdx,
 		},
-		grad: grad,
+		grad:   grad,
+		dstIdx: dstIdx,
 	}
 	t.SetPosition(x, y)
 	return t
@@ -32,7 +33,6 @@ func (t *Tap) Init(game *gixel.GxlGame) {
 	t.Velocity().Set(100, 100)
 	t.Velocity().SetRadians((3.14 / 8) + (6.28/8)*float64(int(t.dstIdx)))
 
-	//t.ApplyGraphic(game.Graphics().LoadGraphic("maimai/assets/images/tap.png", cache.CacheOptions{}))
 	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(80, 80, ic.Black, cache.CacheOptions{}))
 	t.ApplyShader(shaders.NewTapShader(t.grad))
 }

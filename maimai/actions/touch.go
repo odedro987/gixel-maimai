@@ -28,9 +28,8 @@ func NewTouch(x, y float64, grad color.Gradient2) *Touch {
 func (t *Touch) Init(game *gixel.GxlGame) {
 	t.Action.Init(game)
 
-	//t.ApplyGraphic(game.Graphics().LoadGraphic("maimai/assets/images/Touch.png", cache.CacheOptions{}))
 	t.ApplyGraphic(t.Game().Graphics().MakeGraphic(160, 160, ic.Black, cache.CacheOptions{}))
-	t.ApplyShader(shaders.NewTouchShader(t.grad))
+	t.ApplyShader(shaders.NewTouchHoldShader())
 }
 
 func (t *Touch) Update(elapsed float64) error {

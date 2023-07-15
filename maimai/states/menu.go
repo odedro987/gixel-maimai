@@ -28,12 +28,6 @@ func (s *MenuState) Init(game *gixel.GxlGame) {
 	for i := 0; i < 8; i++ {
 		s.Add(actions.NewTap(640-32, 400-32, []color.Gradient2{color.Pink, color.Blue, color.Double, color.Break}[rand.Intn(4)], int8(i)))
 	}
-
-	s.Add(actions.NewTouch(640-80, 400-80, color.Blue))
-
-	// for i := 0; i < 1000; i++ {
-	// 	s.Add(actions.NewTap(rand.Float64()*700, rand.Float64()*700))
-	// }
 }
 
 func (s *MenuState) Update(elapsed float64) error {
